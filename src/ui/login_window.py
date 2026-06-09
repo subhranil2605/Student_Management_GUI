@@ -24,7 +24,7 @@ class LoginWindow(BaseWindow):
             parent: Parent window (root Tk instance)
             auth_service: Authentication service instance
         """
-        super().__init__(parent, "Student Management - Login", 400, 350)
+        super().__init__(parent, "Student Management - Login", 400, 500)
         self.auth_service = auth_service
         self.login_successful = False
 
@@ -57,7 +57,7 @@ class LoginWindow(BaseWindow):
 
         # Form frame
         form_frame = ttk.Frame(main_frame)
-        form_frame.pack(fill="both", expand=True, padx=PADDING["lg"], pady=PADDING["lg"])
+        form_frame.pack(fill="x", padx=PADDING["lg"], pady=PADDING["lg"])
 
         # Username field
         self.username_entry = FormEntry(
@@ -77,13 +77,19 @@ class LoginWindow(BaseWindow):
 
         # Login button
         login_btn = ttk.Button(
-            button_frame, text="Login", command=self.on_login, width=20
+            button_frame, text="Login", command=self.on_login, width=15
         )
         login_btn.pack(side="left", padx=PADDING["sm"])
 
+        # Register button
+        register_btn = ttk.Button(
+            button_frame, text="Register", command=self.on_register, width=15
+        )
+        register_btn.pack(side="left", padx=PADDING["sm"])
+
         # Exit button
         exit_btn = ttk.Button(
-            button_frame, text="Exit", command=self.on_exit, width=20
+            button_frame, text="Exit", command=self.on_exit, width=15
         )
         exit_btn.pack(side="left", padx=PADDING["sm"])
 
@@ -122,6 +128,13 @@ class LoginWindow(BaseWindow):
             self.show_error("Login Failed", str(e))
             self.password_entry.clear()
             self.password_entry.entry.focus()
+
+    def on_register(self) -> None:
+        """Handle register button click."""
+        from src.ui.user_registration_window import UserRegistrationWindow
+
+        # Open registration window
+        UserRegistrationWindow(self.parent, self.auth_service)
 
     def on_exit(self) -> None:
         """Handle exit button click."""
