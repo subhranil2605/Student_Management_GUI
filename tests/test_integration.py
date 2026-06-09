@@ -14,7 +14,7 @@ from typing import Generator
 
 import pytest
 
-from src.config.settings import ROLES, DEFAULT_CATEGORIES
+from src.config.settings import USER_ROLES, STUDENT_CATEGORIES
 from src.database.db_manager import DatabaseManager
 from src.database.models import ExamMarks, Student, User
 from src.database.queries import DatabaseQueries
@@ -40,7 +40,6 @@ def temp_db() -> Generator[str, None, None]:
 def db_manager(temp_db: str) -> DatabaseManager:
     """Initialize database manager with test database."""
     manager = DatabaseManager(temp_db)
-    manager.initialize_database()
     return manager
 
 
@@ -94,7 +93,7 @@ class TestAuthenticationWorkflow:
         username = "testuser"
         password = "SecurePass123!"
 
-        auth_service.register_user(username, password, ROLES["ADMIN"])
+        auth_service.register_user(username, password, USER_ROLES["admin"])
 
         result = auth_service.login(username, password)
         assert result is True
@@ -109,7 +108,7 @@ class TestAuthenticationWorkflow:
         username = "testuser"
         password = "SecurePass123!"
 
-        auth_service.register_user(username, password, ROLES["ADMIN"])
+        auth_service.register_user(username, password, USER_ROLES["admin"])
 
         result = auth_service.login(username, "WrongPassword")
         assert result is False
@@ -122,7 +121,7 @@ class TestAuthenticationWorkflow:
         username = "testuser"
         password = "SecurePass123!"
 
-        auth_service.register_user(username, password, ROLES["TEACHER"])
+        auth_service.register_user(username, password, USER_ROLES["teacher"])
         assert auth_service.login(username, password)
         assert auth_service.is_logged_in()
 
@@ -135,8 +134,8 @@ class TestAuthenticationWorkflow:
         teacher_user = "teacher"
         password = "SecurePass123!"
 
-        auth_service.register_user(admin_user, password, ROLES["ADMIN"])
-        auth_service.register_user(teacher_user, password, ROLES["TEACHER"])
+        auth_service.register_user(admin_user, password, USER_ROLES["admin"])
+        auth_service.register_user(teacher_user, password, USER_ROLES["teacher"])
 
         auth_service.login(admin_user, password)
         assert auth_service.is_admin()
@@ -166,7 +165,7 @@ class TestStudentRegistrationWorkflow:
         phone = "9876543210"
         dob = "2005-01-15"
         sex = "M"
-        category = DEFAULT_CATEGORIES[0]
+        category = STUDENT_CATEGORIES[0]
         nationality = "Indian"
         address = "123 Main St"
         city = "Mumbai"
@@ -212,7 +211,7 @@ class TestStudentRegistrationWorkflow:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -237,7 +236,7 @@ class TestStudentRegistrationWorkflow:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -270,7 +269,7 @@ class TestStudentRegistrationWorkflow:
                 "phone": f"987654321{i}",
                 "dob": "2005-01-15",
                 "sex": "M",
-                "category": DEFAULT_CATEGORIES[0],
+                "category": STUDENT_CATEGORIES[0],
                 "nationality": "Indian",
                 "address": f"{i} Main St",
                 "city": "Mumbai",
@@ -306,7 +305,7 @@ class TestMarksManagementWorkflow:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -345,7 +344,7 @@ class TestMarksManagementWorkflow:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -389,7 +388,7 @@ class TestMarksManagementWorkflow:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -433,7 +432,7 @@ class TestValidationIntegration:
         self, business_validator: BusinessRuleValidator, queries: DatabaseQueries
     ) -> None:
         """Test business rule validation."""
-        user_data = ("testuser", "hash", ROLES["ADMIN"], "2026-01-01")
+        user_data = ("testuser", "hash", USER_ROLES["admin"], "2026-01-01")
         queries.create_user(*user_data)
 
         with pytest.raises(Exception):
@@ -460,7 +459,7 @@ class TestDataPersistence:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -499,7 +498,7 @@ class TestDataPersistence:
             "phone": "9876543210",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -532,7 +531,7 @@ class TestErrorHandlingAndRecovery:
             "phone": "123",
             "dob": "2005-01-15",
             "sex": "M",
-            "category": DEFAULT_CATEGORIES[0],
+            "category": STUDENT_CATEGORIES[0],
             "nationality": "Indian",
             "address": "123 Main St",
             "city": "Mumbai",
@@ -547,13 +546,13 @@ class TestErrorHandlingAndRecovery:
         self, form_validator: FormValidator
     ) -> None:
         """Test form validation with recovery."""
-        valid_inputs = [
-            ("John Doe", "validate_name"),
-            ("john@example.com", "validate_email"),
-            ("9876543210", "validate_phone"),
-            ("85", "validate_marks"),
+        test_cases = [
+            ("John Doe", "validate_name", "John Doe"),
+            ("john@example.com", "validate_email", "john@example.com"),
+            ("9876543210", "validate_phone", "9876543210"),
+            ("85", "validate_marks", 85.0),
         ]
 
-        for valid_input, validator_method in valid_inputs:
+        for valid_input, validator_method, expected in test_cases:
             result = getattr(form_validator, validator_method)(valid_input)
-            assert result == valid_input
+            assert result == expected
