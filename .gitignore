@@ -138,3 +138,8 @@ uv.lock
 build/
 dist/
 *.exe
+
+# DB
+*.db
+*.sqlite
+*.sqlite3
