@@ -6,6 +6,15 @@ from pathlib import Path
 # Project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
+# Asset paths
+ASSETS_DIR = PROJECT_ROOT / "img"
+ICONS = {
+    "app_icon": ASSETS_DIR / "icond.ico",
+    "app_logo": ASSETS_DIR / "ico.png",
+    "college_image": ASSETS_DIR / "college_image.png",
+    "background": ASSETS_DIR / "background_1.png",
+}
+
 # Database configuration
 DATABASE_PATH = PROJECT_ROOT / "student_mgt.db"
 DATABASE_TIMEOUT = 10
