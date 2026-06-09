@@ -1,0 +1,16 @@
+[project]
+name = "student-management-gui"
+version = "1.0.0"
+description = "Student Management System - Developed by Subhranil Sarkar"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "pillow",
+    "tkcalendar",
+    "babel",
+]
+
+[project.optional-dependencies]
+build = [
+    "cx-freeze",
+]
